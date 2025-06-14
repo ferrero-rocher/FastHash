@@ -8,10 +8,17 @@
 #include <optional>
 #include <thread>
 #include <atomic>
+#include "ThreadPool.h"
+
+struct KeyValueStoreStats {
+    size_t totalKeys;
+    std::chrono::seconds uptime;
+    size_t activeThreads;
+};
 
 class KeyValueStore {
 public:
-    KeyValueStore(size_t numBuckets = 16);
+    explicit KeyValueStore(size_t numBuckets = 100);
     ~KeyValueStore();
     
     // Core operations
@@ -26,6 +33,8 @@ public:
     // Utility
     size_t size() const;
     void clear();
+    KeyValueStoreStats getStats() const;
+    void setThreadPool(ThreadPool* pool) { threadPool_ = pool; }
 
 private:
     struct Entry {
@@ -53,4 +62,6 @@ private:
     std::thread cleanerThread_;
     std::atomic<bool> stopCleaner_;
     void cleanerLoop();
+    std::chrono::system_clock::time_point startTime_;
+    ThreadPool* threadPool_ = nullptr;
 }; 

@@ -13,6 +13,7 @@ Server::Server(int port)
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         throw std::runtime_error("WSAStartup failed");
     }
+    store_.setThreadPool(&threadPool_);
 }
 
 Server::~Server() {

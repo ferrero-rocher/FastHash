@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-ThreadPool::ThreadPool(size_t numThreads) : stop_(false) {
+ThreadPool::ThreadPool(size_t numThreads) : stop_(false), activeThreads_(0) {
     if (numThreads == 0) {
         throw std::invalid_argument("ThreadPool must have at least one thread");
     }
@@ -21,8 +21,11 @@ ThreadPool::ThreadPool(size_t numThreads) : stop_(false) {
                     tasks_.pop();
                 }
                 try {
+                    ++activeThreads_;
                     task();
+                    --activeThreads_;
                 } catch (const std::exception& e) {
+                    --activeThreads_;
                     std::cerr << "Exception in thread pool: " << e.what() << std::endl;
                 }
             }

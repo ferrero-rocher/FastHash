@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <iomanip>
 
 CommandHandler::CommandHandler(KeyValueStore& store) : store_(store) {}
 
@@ -17,33 +18,53 @@ static std::vector<std::string> tokenize(const std::string& str) {
 }
 
 std::string CommandHandler::handle(const std::string& command) {
-    auto tokens = tokenize(command);
-    if (tokens.empty()) return "ERROR Empty command";
-    std::string cmd = tokens[0];
+    std::istringstream iss(command);
+    std::string cmd;
+    iss >> cmd;
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
 
     if (cmd == "SET") {
-        if (tokens.size() < 3) return "ERROR Usage: SET key value";
-        store_.set(tokens[1], tokens[2]);
-        return "OK";
-    } else if (cmd == "GET") {
-        if (tokens.size() != 2) return "ERROR Usage: GET key";
-        auto val = store_.get(tokens[1]);
-        if (val) return *val;
-        return "NOT_FOUND";
-    } else if (cmd == "DEL") {
-        if (tokens.size() != 2) return "ERROR Usage: DEL key";
-        return store_.del(tokens[1]) ? "OK" : "NOT_FOUND";
-    } else if (cmd == "EXPIRE") {
-        if (tokens.size() != 3) return "ERROR Usage: EXPIRE key seconds";
-        try {
-            int seconds = std::stoi(tokens[2]);
-            store_.expire(tokens[1], seconds);
+        std::string key, value;
+        if (iss >> key >> value) {
+            store_.set(key, value);
             return "OK";
-        } catch (...) {
-            return "ERROR Invalid seconds";
         }
-    } else {
-        return "ERROR Unknown command";
+        return "ERROR Invalid SET command format";
     }
+    else if (cmd == "GET") {
+        std::string key;
+        if (iss >> key) {
+            auto value = store_.get(key);
+            return value ? *value : "NOT_FOUND";
+        }
+        return "ERROR Invalid GET command format";
+    }
+    else if (cmd == "DEL") {
+        std::string key;
+        if (iss >> key) {
+            return store_.del(key) ? "OK" : "NOT_FOUND";
+        }
+        return "ERROR Invalid DEL command format";
+    }
+    else if (cmd == "EXPIRE") {
+        std::string key;
+        int seconds;
+        if (iss >> key >> seconds) {
+            store_.expire(key, seconds);
+            return "OK";
+        }
+        return "ERROR Invalid EXPIRE command format";
+    }
+    else if (cmd == "STATS") {
+        auto stats = store_.getStats();
+        std::ostringstream oss;
+        oss << "{\n"
+            << "  \"total_keys\": " << stats.totalKeys << ",\n"
+            << "  \"uptime_seconds\": " << stats.uptime.count() << ",\n"
+            << "  \"active_threads\": " << stats.activeThreads << "\n"
+            << "}";
+        return oss.str();
+    }
+
+    return "ERROR Unknown command";
 } 

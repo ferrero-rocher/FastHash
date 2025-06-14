@@ -8,6 +8,7 @@
 #include <condition_variable>
 #include <future>
 #include <type_traits>
+#include <atomic>
 
 class ThreadPool {
 public:
@@ -39,6 +40,9 @@ public:
     // Get the number of worker threads
     size_t threadCount() const { return threads_.size(); }
 
+    // Get the number of active threads
+    size_t activeThreadCount() const { return activeThreads_; }
+
     // Check if the thread pool is stopped
     bool isStopped() const {
         std::unique_lock<std::mutex> lock(queueMutex_);
@@ -50,5 +54,6 @@ private:
     std::queue<std::function<void()>> tasks_;
     mutable std::mutex queueMutex_;
     std::condition_variable condition_;
-    bool stop_;
+    std::atomic<bool> stop_;
+    std::atomic<size_t> activeThreads_;
 }; 

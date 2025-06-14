@@ -7,7 +7,8 @@
 // GET key
 // DEL key
 // EXPIRE key seconds
-// Returns: "OK", value, "NOT_FOUND", "ERROR <msg>"
+// STATS
+// Returns: "OK", value, "NOT_FOUND", "ERROR <msg>", or stats in JSON format
 class CommandHandler {
 public:
     explicit CommandHandler(KeyValueStore& store);

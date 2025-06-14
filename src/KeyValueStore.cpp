@@ -4,7 +4,7 @@
 #include <iostream>
 
 KeyValueStore::KeyValueStore(size_t numBuckets) 
-    : buckets_(numBuckets), numBuckets_(numBuckets), stopCleaner_(false) {
+    : buckets_(numBuckets), numBuckets_(numBuckets), stopCleaner_(false), startTime_(std::chrono::system_clock::now()), threadPool_(nullptr) {
     if (numBuckets == 0) {
         throw std::invalid_argument("Number of buckets must be greater than 0");
     }
@@ -119,4 +119,14 @@ void KeyValueStore::clear() {
         std::unique_lock<std::shared_mutex> lock(bucket.mutex);
         bucket.entries.clear();
     }
+}
+
+KeyValueStoreStats KeyValueStore::getStats() const {
+    KeyValueStoreStats stats;
+    stats.totalKeys = size();
+    stats.uptime = std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::system_clock::now() - startTime_
+    );
+    stats.activeThreads = threadPool_ ? threadPool_->activeThreadCount() : 0;
+    return stats;
 } 
