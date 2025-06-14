@@ -1,0 +1,32 @@
+# Build directories
+build/
+out/
+cmake-build-*/
+
+# IDE files
+.vs/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Compiled files
+*.exe
+*.dll
+*.so
+*.dylib
+*.obj
+*.o
+*.a
+*.lib
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+!CMakeLists.txt
+
+# Windows specific
+*.pdb
+*.ilk
+*.exp 
