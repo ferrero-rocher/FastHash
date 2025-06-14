@@ -1,4 +1,5 @@
 #include "KeyValueStore.h"
+#include "Logger.h"
 #include <functional>
 #include <stdexcept>
 #include <iostream>
@@ -26,6 +27,7 @@ void KeyValueStore::cleanerLoop() {
             std::unique_lock<std::shared_mutex> lock(bucket.mutex);
             for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ) {
                 if (it->second.hasExpiry && std::chrono::system_clock::now() > it->second.expiry) {
+                    Logger::getInstance().logKeyExpired(it->first);
                     it = bucket.entries.erase(it);
                 } else {
                     ++it;
