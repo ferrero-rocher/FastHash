@@ -23,7 +23,6 @@ ThreadPool::ThreadPool(size_t numThreads) : stop_(false) {
                 try {
                     task();
                 } catch (const std::exception& e) {
-                    // Log or handle the exception
                     std::cerr << "Exception in thread pool: " << e.what() << std::endl;
                 }
             }

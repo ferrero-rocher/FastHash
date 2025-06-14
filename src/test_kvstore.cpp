@@ -27,7 +27,6 @@ void testBasicOperations() {
 void testExpiration() {
     KeyValueStore store;
     
-    // Test expiration
     store.set("key1", "value1");
     store.expire("key1", 1);  // 1 second expiration
     assert(store.get("key1"));  // Should still exist
@@ -42,7 +41,6 @@ void testConcurrentAccess() {
     const int numThreads = 4;
     const int numOperations = 1000;
 
-    // Concurrent writers
     for (int i = 0; i < numThreads; ++i) {
         threads.emplace_back([&store, i, numOperations]() {
             for (int j = 0; j < numOperations; ++j) {
@@ -53,7 +51,6 @@ void testConcurrentAccess() {
         });
     }
 
-    // Concurrent readers
     for (int i = 0; i < numThreads; ++i) {
         threads.emplace_back([&store, i, numOperations]() {
             for (int j = 0; j < numOperations; ++j) {
@@ -63,7 +60,6 @@ void testConcurrentAccess() {
         });
     }
 
-    // Wait for all threads
     for (auto& thread : threads) {
         thread.join();
     }
@@ -76,7 +72,6 @@ void testBackgroundCleaner() {
     store.set("temp", "value");
     store.expire("temp", 1); // 1 second TTL
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    // The key should be removed by the cleaner thread
     assert(!store.get("temp"));
     std::cout << "Background cleaner test passed\n";
 }
@@ -97,7 +92,6 @@ void testCommandHandler() {
     assert(handler.handle("EXPIRE temp 1") == "OK");
     std::this_thread::sleep_for(std::chrono::seconds(2));
     assert(handler.handle("GET temp") == "NOT_FOUND");
-    // Error cases
     assert(handler.handle("").find("ERROR") == 0);
     assert(handler.handle("SET onlykey").find("ERROR") == 0);
     assert(handler.handle("GET").find("ERROR") == 0);
