@@ -1,67 +1,68 @@
 #pragma once
+
 #include <string>
 #include <unordered_map>
-#include <chrono>
 #include <mutex>
-#include <shared_mutex>
-#include <vector>
+#include <chrono>
 #include <optional>
+#include <vector>
 #include <thread>
 #include <atomic>
-#include "ThreadPool.h"
+#include "Logger.h"
+
+using namespace std;
 
 struct KeyValueStoreStats {
-    size_t totalKeys;
-    std::chrono::seconds uptime;
-    size_t activeThreads;
+    size_t total_keys = 0;
+    size_t expired_keys = 0;
+    size_t memory_usage = 0;
+    size_t totalOperations = 0;
+    size_t activeThreads = 0;
+    chrono::seconds uptime{0};
 };
 
 class KeyValueStore {
 public:
-    explicit KeyValueStore(size_t numBuckets = 100);
+    KeyValueStore() = default;
+    KeyValueStore(const KeyValueStore&) = delete;
+    KeyValueStore& operator=(const KeyValueStore&) = delete;
+    KeyValueStore(KeyValueStore&&) = default;
     ~KeyValueStore();
-    
-    // Core operations
-    void set(const std::string& key, const std::string& value);
-    std::optional<std::string> get(const std::string& key);
-    bool del(const std::string& key);
-    
-    // Expiration
-    void expire(const std::string& key, int seconds);
-    bool hasExpired(const std::string& key) const;
-    
-    // Utility
-    size_t size() const;
-    void clear();
+
+    bool set(const string& key, const string& value, int ttl_seconds = 0);
+    optional<string> get(const string& key);
+    bool del(const string& key);
+    bool exists(const string& key);
+    bool expire(const string& key, int ttl_seconds);
+    optional<chrono::seconds> ttl(const string& key);
+    vector<string> getKeys() const;
+    bool clear();
+    bool save(const string& filename) const;
+    bool load(const string& filename);
     KeyValueStoreStats getStats() const;
-    void setThreadPool(ThreadPool* pool) { threadPool_ = pool; }
+    bool flush();
+
+    void incrementActiveThreads() { activeThreads_++; }
+    void decrementActiveThreads() { activeThreads_--; }
 
 private:
-    struct Entry {
-        std::string value;
-        std::chrono::system_clock::time_point expiry;
-        bool hasExpiry;
+    struct Value {
+        string data;
+        optional<chrono::system_clock::time_point> expiry;
     };
 
-    struct Bucket {
-        std::unordered_map<std::string, Entry> entries;
-        mutable std::shared_mutex mutex;
-    };
+    unordered_map<string, Value> store_;
+    mutable mutex mutex_;
+    atomic<size_t> memoryUsage_{0};
+    atomic<size_t> totalOperations_{0};
+    atomic<size_t> activeThreads_{0};
+    chrono::system_clock::time_point startTime_{chrono::system_clock::now()};
+    thread cleanerThread_;
+    atomic<bool> running_{true};
 
-    // Get bucket index for a key
-    size_t getBucketIndex(const std::string& key) const;
-    
-    // Get bucket for a key
-    Bucket& getBucket(const std::string& key);
-    const Bucket& getBucket(const std::string& key) const;
-
-    std::vector<Bucket> buckets_;
-    size_t numBuckets_;
-
-    // TTL cleaner thread
-    std::thread cleanerThread_;
-    std::atomic<bool> stopCleaner_;
+    void updateMemoryUsage(const string& key, const string& value, bool isDelete);
     void cleanerLoop();
-    std::chrono::system_clock::time_point startTime_;
-    ThreadPool* threadPool_ = nullptr;
+    bool isExpired(const Value& value) const;
+    bool saveToFile(const string& filename) const;
+    bool loadFromFile(const string& filename);
 }; 

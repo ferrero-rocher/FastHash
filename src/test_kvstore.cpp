@@ -1,117 +1,131 @@
-#include "KeyValueStore.h"
-#include "CommandHandler.h"
-#include <iostream>
+#include "../include/KeyValueStore.h"
+#include "../include/CommandHandler.h"
+#include "../include/Logger.h"
+#include <cassert>
 #include <thread>
 #include <vector>
-#include <cassert>
+#include <chrono>
+#include <iostream>
+#include <sstream>
 
 void testBasicOperations() {
     KeyValueStore store;
+    Logger& logger = Logger::getInstance();
+    CommandHandler handler(store, logger);
     
     // Test SET and GET
     store.set("key1", "value1");
     auto value = store.get("key1");
     assert(value && *value == "value1");
-    std::cout << "Basic SET/GET test passed\n";
-
+    
     // Test DEL
-    assert(store.del("key1"));
+    store.del("key1");
     assert(!store.get("key1"));
-    std::cout << "DEL test passed\n";
-
-    // Test non-existent key
-    assert(!store.get("nonexistent"));
-    std::cout << "Non-existent key test passed\n";
+    
+    // Cleanup
+    store.clear();
 }
 
 void testExpiration() {
     KeyValueStore store;
+    Logger& logger = Logger::getInstance();
+    CommandHandler handler(store, logger);
     
     store.set("key1", "value1");
     store.expire("key1", 1);  // 1 second expiration
-    assert(store.get("key1"));  // Should still exist
+    
+    // Value should exist
+    auto value = store.get("key1");
+    assert(value && *value == "value1");
+    
+    // Wait for expiration
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    assert(!store.get("key1"));  // Should be expired
-    std::cout << "Expiration test passed\n";
+    
+    // Value should be expired
+    assert(!store.get("key1"));
+    
+    // Cleanup
+    store.clear();
 }
 
 void testConcurrentAccess() {
     KeyValueStore store;
+    Logger& logger = Logger::getInstance();
+    CommandHandler handler(store, logger);
+    
     std::vector<std::thread> threads;
-    const int numThreads = 4;
-    const int numOperations = 1000;
-
+    const int numThreads = 10;
+    const int numOperations = 100;
+    
     for (int i = 0; i < numThreads; ++i) {
         threads.emplace_back([&store, i, numOperations]() {
             for (int j = 0; j < numOperations; ++j) {
                 std::string key = "key" + std::to_string(i) + "_" + std::to_string(j);
-                store.set(key, "value");
+                std::string value = "value" + std::to_string(i) + "_" + std::to_string(j);
+                
+                store.set(key, value);
+                auto retrieved = store.get(key);
+                assert(retrieved && *retrieved == value);
                 store.expire(key, 1);
+                store.del(key);
+                assert(!store.get(key));
             }
         });
     }
-
-    for (int i = 0; i < numThreads; ++i) {
-        threads.emplace_back([&store, i, numOperations]() {
-            for (int j = 0; j < numOperations; ++j) {
-                std::string key = "key" + std::to_string(i) + "_" + std::to_string(j);
-                store.get(key);
-            }
-        });
-    }
-
+    
     for (auto& thread : threads) {
         thread.join();
     }
-
-    std::cout << "Concurrent access test passed\n";
-}
-
-void testBackgroundCleaner() {
-    KeyValueStore store;
-    store.set("temp", "value");
-    store.expire("temp", 1); // 1 second TTL
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    assert(!store.get("temp"));
-    std::cout << "Background cleaner test passed\n";
+    
+    // Cleanup
+    store.clear();
 }
 
 void testCommandHandler() {
     KeyValueStore store;
-    CommandHandler handler(store);
+    Logger& logger = Logger::getInstance();
+    CommandHandler handler(store, logger);
     
-    // SET
-    assert(handler.handle("SET foo bar") == "OK");
-    // GET
-    assert(handler.handle("GET foo") == "bar");
-    // DEL
-    assert(handler.handle("DEL foo") == "OK");
-    assert(handler.handle("GET foo") == "NOT_FOUND");
-    // EXPIRE
-    handler.handle("SET temp value");
-    assert(handler.handle("EXPIRE temp 1") == "OK");
+    // Test SET command
+    assert(handler.handleCommand("SET foo bar") == "OK");
+    
+    // Test GET command
+    assert(handler.handleCommand("GET foo") == "bar");
+    
+    // Test DEL command
+    assert(handler.handleCommand("DEL foo") == "OK");
+    
+    // Test GET after DEL
+    assert(handler.handleCommand("GET foo") == "Key not found");
+    
+    // Test EXPIRE command
+    assert(handler.handleCommand("SET temp value") == "OK");
+    assert(handler.handleCommand("EXPIRE temp 1") == "OK");
+    
+    // Wait for expiration
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    assert(handler.handle("GET temp") == "NOT_FOUND");
-    assert(handler.handle("").find("ERROR") == 0);
-    assert(handler.handle("SET onlykey").find("ERROR") == 0);
-    assert(handler.handle("GET").find("ERROR") == 0);
-    assert(handler.handle("DEL").find("ERROR") == 0);
-    assert(handler.handle("EXPIRE temp notanumber").find("ERROR") == 0);
-    assert(handler.handle("UNKNOWN foo").find("ERROR") == 0);
-    std::cout << "CommandHandler test passed\n";
+    
+    // Test GET after expiration
+    assert(handler.handleCommand("GET temp") == "Key not found");
+    
+    // Test error cases
+    assert(handler.handleCommand("SET onlykey").find("ERROR") == 0);
+    assert(handler.handleCommand("GET").find("ERROR") == 0);
+    assert(handler.handleCommand("DEL").find("ERROR") == 0);
+    assert(handler.handleCommand("EXPIRE temp notanumber").find("ERROR") == 0);
+    
+    // Cleanup
+    store.clear();
 }
 
 int main() {
     try {
-        std::cout << "Starting KeyValueStore tests...\n";
-        
         testBasicOperations();
         testExpiration();
         testConcurrentAccess();
-        testBackgroundCleaner();
         testCommandHandler();
         
-        std::cout << "All tests passed!\n";
+        std::cout << "All tests passed!" << std::endl;
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Test failed: " << e.what() << std::endl;

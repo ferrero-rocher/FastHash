@@ -1,0 +1,18 @@
+# ninja log v5
+112	2268	7716726704614885	src/CMakeFiles/test_kvstore.dir/Logger.cpp.obj	ffeba09a262217ad
+55	693	7716691625822933	src/test_client.exe	e5a9c2a1683fd362
+59	2167	7716726703745799	src/CMakeFiles/kvstore_server.dir/Logger.cpp.obj	6d4e32c7b9ea1e38
+2576	6615	7716687360976107	src/CMakeFiles/test_client.dir/test_client.cpp.obj	7bf041d4bb2c98a0
+56	4679	7716771603198297	src/CMakeFiles/kvstore_server.dir/CommandHandler.cpp.obj	fb1fb2f61da8fdc0
+39	4071	7716771596878135	src/CMakeFiles/kvstore_server.dir/main.cpp.obj	75c225c5c1d61d06
+26	858	7716691627492594	src/test_threadpool.exe	7d7b90d0c8f72016
+62	4711	7716771603496341	src/CMakeFiles/test_kvstore.dir/test_kvstore.cpp.obj	e4b46d37016b3920
+73	4639	7716771602786509	src/CMakeFiles/test_kvstore.dir/CommandHandler.cpp.obj	964686403d302b44
+2626	6960	7716687364455333	src/CMakeFiles/kvstore_client.dir/client.cpp.obj	548eadb49f670de2
+45	9978	7716771656273418	src/CMakeFiles/kvstore_server.dir/Server.cpp.obj	60146e1482ceb60
+42	7303	7716687367882940	src/CMakeFiles/test_threadpool.dir/test_threadpool.cpp.obj	9f2a48776fede67e
+71	697	7716691625813038	src/kvstore_client.exe	4033ff7cd460b937
+46	1850	7716773146331575	src/CMakeFiles/kvstore_server.dir/KeyValueStore.cpp.obj	dd82e1c7ce77a8d4
+55	1871	7716773146442469	src/CMakeFiles/test_kvstore.dir/KeyValueStore.cpp.obj	52d331f2a4688a4
+1852	2407	7716773151869773	src/kvstore_server.exe	943b0399147c42cd
+1872	2438	7716773152193211	src/test_kvstore.exe	a74261dafed821f1

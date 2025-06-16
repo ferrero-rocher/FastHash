@@ -1,170 +1,132 @@
-#include "Server.h"
-#include <iostream>
+#include "../include/Server.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <cstring>
-#include <functional>
-#include <csignal>
+#include <iostream>
+#include <sstream>
+#include <thread>
+
+using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-std::atomic<Server*> Server::instance_(nullptr);
-
-Server::Server(int port) 
-    : port_(port), threadPool_(4), store_(100), commandHandler_(store_), running_(false), serverSocket_(INVALID_SOCKET) {
+Server::Server(Logger& logger) : logger_(logger), commandHandler_(store_, logger_) {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        throw std::runtime_error("WSAStartup failed");
+        logger_.error("Failed to initialize Winsock");
+        throw std::runtime_error("Failed to initialize Winsock");
     }
-    store_.setThreadPool(&threadPool_);
-    instance_ = this;
 }
 
 Server::~Server() {
-    if (running_) {
-        stop();
-    }
-    instance_ = nullptr;
+    stop();
     WSACleanup();
 }
 
-void Server::handleSignal(int signal) {
-    if (signal == SIGINT && instance_) {
-        std::cout << "\nShutting down server..." << std::endl;
-        instance_.load()->stop();
+bool Server::start(int port) {
+    if (running_) {
+        logger_.warning("Server is already running");
+        return false;
     }
+
+    serverSocket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (serverSocket_ == INVALID_SOCKET) {
+        logger_.error("Failed to create socket");
+        return false;
+    }
+
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+    serverAddr.sin_port = htons(port);
+
+    if (bind(serverSocket_, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        logger_.error("Failed to bind socket");
+        closesocket(serverSocket_);
+        return false;
+    }
+
+    if (listen(serverSocket_, SOMAXCONN) == SOCKET_ERROR) {
+        logger_.error("Failed to listen on socket");
+        closesocket(serverSocket_);
+        return false;
+    }
+
+    running_ = true;
+    serverThread_ = std::thread(&Server::serverLoop, this, port);
+    logger_.info("Server started on port " + std::to_string(port));
+    std::cout << "Server started on port " << port << std::endl;
+    return true;
 }
 
 void Server::stop() {
-    if (!running_) return;
-    
+    if (!running_) {
+        return;
+    }
+
     running_ = false;
-    Logger::getInstance().logServerStop();
-    std::cout << "Server stopped" << std::endl;
-    
     if (serverSocket_ != INVALID_SOCKET) {
         closesocket(serverSocket_);
         serverSocket_ = INVALID_SOCKET;
     }
+
+    if (serverThread_.joinable()) {
+        serverThread_.join();
+    }
+
+    logger_.info("Server stopped");
 }
 
-void Server::start() {
-    serverSocket_ = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocket_ == INVALID_SOCKET) {
-        throw std::runtime_error("Error creating socket");
-    }
-
-    // Allow socket reuse
-    int opt = 1;
-    if (setsockopt(serverSocket_, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0) {
-        closesocket(serverSocket_);
-        throw std::runtime_error("setsockopt failed");
-    }
-
-    struct sockaddr_in serverAddr;
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
-    serverAddr.sin_port = htons(port_);
-
-    if (bind(serverSocket_, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-        closesocket(serverSocket_);
-        throw std::runtime_error("Error binding socket to port " + std::to_string(port_));
-    }
-
-    if (listen(serverSocket_, 5) == SOCKET_ERROR) {
-        closesocket(serverSocket_);
-        throw std::runtime_error("Error listening on socket");
-    }
-
-    Logger::getInstance().logServerStart(port_);
-    std::cout << "Server started on port " << port_ << std::endl;
-    std::cout << "Press Ctrl+C to stop the server" << std::endl;
-    running_ = true;
-
-    // Set up signal handler
-    signal(SIGINT, handleSignal);
-
+void Server::serverLoop(int port) {
     while (running_) {
-        SOCKET clientSocket = accept(serverSocket_, nullptr, nullptr);
+        sockaddr_in clientAddr;
+        int addrLen = sizeof(clientAddr);
+        SOCKET clientSocket = accept(serverSocket_, (sockaddr*)&clientAddr, &addrLen);
+
         if (clientSocket == INVALID_SOCKET) {
             if (running_) {
-                std::cerr << "Error accepting connection: " << WSAGetLastError() << std::endl;
+                logger_.error("Failed to accept connection");
             }
             continue;
         }
 
-        // Get client info for logging
-        struct sockaddr_in clientAddr;
-        int addrLen = sizeof(clientAddr);
-        getpeername(clientSocket, (struct sockaddr*)&clientAddr, &addrLen);
         char clientIP[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, INET_ADDRSTRLEN);
-        std::string clientInfo = std::string(clientIP) + ":" + std::to_string(ntohs(clientAddr.sin_port));
-        
-        Logger::getInstance().logClientConnect(clientInfo);
-        std::cout << "New client connected: " << clientInfo << std::endl;
+        logger_.info("New connection from " + std::string(clientIP));
 
-        threadPool_.enqueue([this, clientSocket]() {
-            handleClient(clientSocket);
-        });
+        std::thread clientThread(&Server::handleClient, this, clientSocket);
+        clientThread.detach();
     }
 }
 
-void Server::handleClient(SOCKET clientSocket) {
-    try {
-        while (running_) {
-            std::string command = readLine(clientSocket);
-            if (command.empty()) {
-                break;
-            }
+void Server::handleClient(int clientSocket) {
+    store_.incrementActiveThreads();
+    char buffer[4096];
+    std::string command;
 
-            Logger::getInstance().logCommand(command);
-            std::string response = commandHandler_.handle(command);
-            if (!sendResponse(clientSocket, response)) {
-                break;
+    while (running_) {
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesReceived <= 0) {
+            break;
+        }
+
+        buffer[bytesReceived] = '\0';
+        command += buffer;
+
+        size_t pos;
+        while ((pos = command.find('\n')) != std::string::npos) {
+            std::string line = command.substr(0, pos);
+            command.erase(0, pos + 1);
+
+            if (!line.empty()) {
+                std::cout << "Received command: " << line << std::endl;
+                std::string response = commandHandler_.handleCommand(line);
+                std::cout << "Response: " << response << std::endl;
+                response += "\n";  // Add newline to response
+                send(clientSocket, response.c_str(), response.length(), 0);
             }
         }
-    } catch (const std::exception& e) {
-        std::cerr << "Error handling client: " << e.what() << std::endl;
     }
+
+    store_.decrementActiveThreads();
     closesocket(clientSocket);
-}
-
-std::string Server::readLine(SOCKET clientSocket) {
-    std::string line;
-    char buffer[1024];
-    int bytesRead;
-
-    while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0)) > 0) {
-        buffer[bytesRead] = '\0';
-        line.append(buffer);
-
-        // Check if we have a complete line
-        size_t pos = line.find('\n');
-        if (pos != std::string::npos) {
-            std::string result = line.substr(0, pos);
-            line.erase(0, pos + 1);
-            return result;
-        }
-    }
-
-    return line;
-}
-
-bool Server::sendResponse(SOCKET clientSocket, const std::string& response) {
-    std::string fullResponse = response + "\n";
-    int totalSent = 0;
-    int remaining = fullResponse.length();
-
-    while (totalSent < fullResponse.length()) {
-        int sent = send(clientSocket, fullResponse.c_str() + totalSent, remaining, 0);
-        if (sent == SOCKET_ERROR) {
-            return false;
-        }
-        totalSent += sent;
-        remaining -= sent;
-    }
-
-    return true;
 } 
