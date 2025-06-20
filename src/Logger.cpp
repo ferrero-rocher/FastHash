@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <filesystem>
 
 using namespace std;
 
@@ -144,14 +145,41 @@ void Logger::error(const string& message) {
 void Logger::setLogFile(const string& filename) {
     try {
         lock_guard<mutex> lock(mutex_);
+        
+        // Close existing file if open
         if (logFile_.is_open()) {
             logFile_.close();
         }
+        
+        // Try to open the log file
         logFile_.open(filename, ios::app);
         if (!logFile_.is_open()) {
             cerr << "Failed to open log file: " << filename << endl;
             cerr.flush();
+            return;
         }
+        
+        // Write initial log entry to confirm file is working
+        auto now = chrono::system_clock::now();
+        auto now_time_t = chrono::system_clock::to_time_t(now);
+        
+        char time_str[32];
+        #ifdef _WIN32
+            struct tm timeinfo;
+            localtime_s(&timeinfo, &now_time_t);
+            strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &timeinfo);
+        #else
+            struct tm* timeinfo = localtime(&now_time_t);
+            strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", timeinfo);
+        #endif
+        
+        stringstream ss;
+        ss << time_str << " [INFO] Logger initialized - logging to file: " << filename;
+        logFile_ << ss.str() << endl;
+        logFile_.flush();
+        
+        cout << "Logging to file: " << filename << endl;
+        
     } catch (const exception& e) {
         cerr << "Logger error in setLogFile(): " << e.what() << endl;
         cerr.flush();
@@ -162,6 +190,25 @@ Logger::~Logger() {
     try {
         lock_guard<mutex> lock(mutex_);
         if (logFile_.is_open()) {
+            // Write final log entry
+            auto now = chrono::system_clock::now();
+            auto now_time_t = chrono::system_clock::to_time_t(now);
+            
+            char time_str[32];
+            #ifdef _WIN32
+                struct tm timeinfo;
+                localtime_s(&timeinfo, &now_time_t);
+                strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &timeinfo);
+            #else
+                struct tm* timeinfo = localtime(&now_time_t);
+                strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", timeinfo);
+            #endif
+            
+            stringstream ss;
+            ss << time_str << " [INFO] Logger shutting down";
+            logFile_ << ss.str() << endl;
+            logFile_.flush();
+            
             logFile_.close();
         }
     } catch (const exception& e) {

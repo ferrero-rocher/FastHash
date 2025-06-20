@@ -77,19 +77,24 @@ bool Server::start(int port) {
 }
 
 void Server::stop() {
+    logger_.info("Server stop requested");
     running_ = false;
     
     if (serverSocket_ != INVALID_SOCKET) {
         closesocket(serverSocket_);
         serverSocket_ = INVALID_SOCKET;
+        logger_.info("Server socket closed");
     }
     
     if (serverThread_.joinable()) {
         serverThread_.join();
+        logger_.info("Server thread joined");
     }
+    logger_.info("Server stopped successfully");
 }
 
 void Server::serverLoop(int port) {
+    logger_.info("Server loop started, listening for connections on port " + to_string(port));
     while (running_) {
         try {
             SOCKET clientSocket = accept(serverSocket_, nullptr, nullptr);
@@ -100,6 +105,7 @@ void Server::serverLoop(int port) {
                 continue;
             }
 
+            logger_.info("New client connection accepted");
             threadPool_.submit([this, clientSocket]() {
                 handleClient(clientSocket);
             });
@@ -109,10 +115,13 @@ void Server::serverLoop(int port) {
             logger_.error("Unknown exception in serverLoop");
         }
     }
+    logger_.info("Server loop stopped");
 }
 
 void Server::handleClient(SOCKET clientSocket) {
     try {
+        logger_.info("Handling client connection");
+        
         // Send welcome message and menu
         string welcome = "Welcome to Key-Value Store Server!\n"
                         "Commands:\n"
@@ -143,7 +152,7 @@ void Server::handleClient(SOCKET clientSocket) {
             bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
             if (bytesReceived <= 0) {
                 if (bytesReceived == 0) {
-                    logger_.info("Client disconnected");
+                    logger_.info("Client disconnected gracefully");
                 } else {
                     logger_.error("recv failed with error: " + to_string(WSAGetLastError()));
                 }
@@ -164,6 +173,8 @@ void Server::handleClient(SOCKET clientSocket) {
                 command.erase(command.find_last_not_of(" \t\r\n") + 1);
 
                 if (!command.empty()) {
+                    logger_.info("[REQUEST] " + command);
+                    
                     string response;
                     try {
                         response = commandHandler_.handleCommand(command);
@@ -188,6 +199,7 @@ void Server::handleClient(SOCKET clientSocket) {
 
                     // If command was QUIT, close the connection after sending BYE
                     if (command == "QUIT") {
+                        logger_.info("Client requested disconnect");
                         closesocket(clientSocket);
                         return;
                     }

@@ -32,19 +32,25 @@ int main(int argc, char** argv) {
         Logger& logger = Logger::getInstance();
         logger.setLogFile("server.log");  // Use a different log file for server
         
+        logger.info("Server starting up...");
+        logger.info("Port: " + to_string(port));
+        
         // Initialize server
         Server server(logger);
 
         // Set up signal handlers
         signal(SIGINT, signalHandler);
         signal(SIGTERM, signalHandler);
+        logger.info("Signal handlers configured");
 
         // Start server
         if (!server.start(port)) {
+            logger.error("Failed to start server");
             cerr << "Failed to start server" << endl;
             return 1;
         }
 
+        logger.info("Server started successfully on port " + to_string(port));
         cout << "Server started on port " << port << endl;
         cout << "Press Ctrl+C to stop" << endl;
 
@@ -54,7 +60,9 @@ int main(int argc, char** argv) {
         }
 
         // Cleanup
+        logger.info("Shutdown signal received, stopping server...");
         server.stop();
+        logger.info("Server stopped successfully");
         return 0;
     } catch (const exception& e) {
         cerr << "Fatal error: " << e.what() << endl;

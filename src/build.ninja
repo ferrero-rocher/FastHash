@@ -76,37 +76,47 @@ build cmake_object_order_depends_target_kvstore_server: phony || src/CMakeFiles/
 build src/CMakeFiles/kvstore_server.dir/main.cpp.obj: CXX_COMPILER__kvstore_server_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/main.cpp || cmake_object_order_depends_target_kvstore_server
   DEP_FILE = src\CMakeFiles\kvstore_server.dir\main.cpp.obj.d
   FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_server.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
+  TARGET_PDB = src\kvstore_server.pdb
 
 build src/CMakeFiles/kvstore_server.dir/Server.cpp.obj: CXX_COMPILER__kvstore_server_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/Server.cpp || cmake_object_order_depends_target_kvstore_server
   DEP_FILE = src\CMakeFiles\kvstore_server.dir\Server.cpp.obj.d
   FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_server.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
+  TARGET_PDB = src\kvstore_server.pdb
 
 build src/CMakeFiles/kvstore_server.dir/KeyValueStore.cpp.obj: CXX_COMPILER__kvstore_server_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/KeyValueStore.cpp || cmake_object_order_depends_target_kvstore_server
   DEP_FILE = src\CMakeFiles\kvstore_server.dir\KeyValueStore.cpp.obj.d
   FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_server.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
+  TARGET_PDB = src\kvstore_server.pdb
 
 build src/CMakeFiles/kvstore_server.dir/CommandHandler.cpp.obj: CXX_COMPILER__kvstore_server_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/CommandHandler.cpp || cmake_object_order_depends_target_kvstore_server
   DEP_FILE = src\CMakeFiles\kvstore_server.dir\CommandHandler.cpp.obj.d
   FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_server.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
+  TARGET_PDB = src\kvstore_server.pdb
 
 build src/CMakeFiles/kvstore_server.dir/Logger.cpp.obj: CXX_COMPILER__kvstore_server_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/Logger.cpp || cmake_object_order_depends_target_kvstore_server
   DEP_FILE = src\CMakeFiles\kvstore_server.dir\Logger.cpp.obj.d
   FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_server.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
+  TARGET_PDB = src\kvstore_server.pdb
 
 
 # =============================================================================
@@ -121,129 +131,10 @@ build src/kvstore_server.exe: CXX_EXECUTABLE_LINKER__kvstore_server_ src/CMakeFi
   OBJECT_DIR = src\CMakeFiles\kvstore_server.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_server.dir\
   TARGET_FILE = src\kvstore_server.exe
   TARGET_IMPLIB = src\libkvstore_server.dll.a
-  TARGET_PDB = kvstore_server.exe.dbg
-
-# =============================================================================
-# Object build statements for EXECUTABLE target test_threadpool
-
-
-#############################################
-# Order-only phony target for test_threadpool
-
-build cmake_object_order_depends_target_test_threadpool: phony || src/CMakeFiles/test_threadpool.dir
-
-build src/CMakeFiles/test_threadpool.dir/test_threadpool.cpp.obj: CXX_COMPILER__test_threadpool_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/test_threadpool.cpp || cmake_object_order_depends_target_test_threadpool
-  DEP_FILE = src\CMakeFiles\test_threadpool.dir\test_threadpool.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_threadpool.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_threadpool.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target test_threadpool
-
-
-#############################################
-# Link the executable src\test_threadpool.exe
-
-build src/test_threadpool.exe: CXX_EXECUTABLE_LINKER__test_threadpool_ src/CMakeFiles/test_threadpool.dir/test_threadpool.cpp.obj
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = src\CMakeFiles\test_threadpool.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = src\test_threadpool.exe
-  TARGET_IMPLIB = src\libtest_threadpool.dll.a
-  TARGET_PDB = test_threadpool.exe.dbg
-
-# =============================================================================
-# Object build statements for EXECUTABLE target test_kvstore
-
-
-#############################################
-# Order-only phony target for test_kvstore
-
-build cmake_object_order_depends_target_test_kvstore: phony || src/CMakeFiles/test_kvstore.dir
-
-build src/CMakeFiles/test_kvstore.dir/test_kvstore.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/test_kvstore.cpp || cmake_object_order_depends_target_test_kvstore
-  DEP_FILE = src\CMakeFiles\test_kvstore.dir\test_kvstore.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
-
-build src/CMakeFiles/test_kvstore.dir/KeyValueStore.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/KeyValueStore.cpp || cmake_object_order_depends_target_test_kvstore
-  DEP_FILE = src\CMakeFiles\test_kvstore.dir\KeyValueStore.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
-
-build src/CMakeFiles/test_kvstore.dir/CommandHandler.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/CommandHandler.cpp || cmake_object_order_depends_target_test_kvstore
-  DEP_FILE = src\CMakeFiles\test_kvstore.dir\CommandHandler.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
-
-build src/CMakeFiles/test_kvstore.dir/Logger.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/Logger.cpp || cmake_object_order_depends_target_test_kvstore
-  DEP_FILE = src\CMakeFiles\test_kvstore.dir\Logger.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target test_kvstore
-
-
-#############################################
-# Link the executable src\test_kvstore.exe
-
-build src/test_kvstore.exe: CXX_EXECUTABLE_LINKER__test_kvstore_ src/CMakeFiles/test_kvstore.dir/test_kvstore.cpp.obj src/CMakeFiles/test_kvstore.dir/KeyValueStore.cpp.obj src/CMakeFiles/test_kvstore.dir/CommandHandler.cpp.obj src/CMakeFiles/test_kvstore.dir/Logger.cpp.obj
-  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = src\test_kvstore.exe
-  TARGET_IMPLIB = src\libtest_kvstore.dll.a
-  TARGET_PDB = test_kvstore.exe.dbg
-
-# =============================================================================
-# Object build statements for EXECUTABLE target test_client
-
-
-#############################################
-# Order-only phony target for test_client
-
-build cmake_object_order_depends_target_test_client: phony || src/CMakeFiles/test_client.dir
-
-build src/CMakeFiles/test_client.dir/test_client.cpp.obj: CXX_COMPILER__test_client_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/test_client.cpp || cmake_object_order_depends_target_test_client
-  DEP_FILE = src\CMakeFiles\test_client.dir\test_client.cpp.obj.d
-  FLAGS = -std=gnu++17
-  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/src/../include
-  OBJECT_DIR = src\CMakeFiles\test_client.dir
-  OBJECT_FILE_DIR = src\CMakeFiles\test_client.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target test_client
-
-
-#############################################
-# Link the executable src\test_client.exe
-
-build src/test_client.exe: CXX_EXECUTABLE_LINKER__test_client_ src/CMakeFiles/test_client.dir/test_client.cpp.obj
-  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = src\CMakeFiles\test_client.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = src\test_client.exe
-  TARGET_IMPLIB = src\libtest_client.dll.a
-  TARGET_PDB = test_client.exe.dbg
+  TARGET_PDB = src\kvstore_server.pdb
 
 # =============================================================================
 # Object build statements for EXECUTABLE target kvstore_client
@@ -260,6 +151,17 @@ build src/CMakeFiles/kvstore_client.dir/client.cpp.obj: CXX_COMPILER__kvstore_cl
   INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
   OBJECT_DIR = src\CMakeFiles\kvstore_client.dir
   OBJECT_FILE_DIR = src\CMakeFiles\kvstore_client.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_client.dir\
+  TARGET_PDB = src\kvstore_client.pdb
+
+build src/CMakeFiles/kvstore_client.dir/Logger.cpp.obj: CXX_COMPILER__kvstore_client_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/Logger.cpp || cmake_object_order_depends_target_kvstore_client
+  DEP_FILE = src\CMakeFiles\kvstore_client.dir\Logger.cpp.obj.d
+  FLAGS = -std=gnu++17
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
+  OBJECT_DIR = src\CMakeFiles\kvstore_client.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\kvstore_client.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_client.dir\
+  TARGET_PDB = src\kvstore_client.pdb
 
 
 # =============================================================================
@@ -269,14 +171,78 @@ build src/CMakeFiles/kvstore_client.dir/client.cpp.obj: CXX_COMPILER__kvstore_cl
 #############################################
 # Link the executable src\kvstore_client.exe
 
-build src/kvstore_client.exe: CXX_EXECUTABLE_LINKER__kvstore_client_ src/CMakeFiles/kvstore_client.dir/client.cpp.obj
+build src/kvstore_client.exe: CXX_EXECUTABLE_LINKER__kvstore_client_ src/CMakeFiles/kvstore_client.dir/client.cpp.obj src/CMakeFiles/kvstore_client.dir/Logger.cpp.obj
   LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = src\CMakeFiles\kvstore_client.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
+  TARGET_COMPILE_PDB = src\CMakeFiles\kvstore_client.dir\
   TARGET_FILE = src\kvstore_client.exe
   TARGET_IMPLIB = src\libkvstore_client.dll.a
-  TARGET_PDB = kvstore_client.exe.dbg
+  TARGET_PDB = src\kvstore_client.pdb
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_kvstore
+
+
+#############################################
+# Order-only phony target for test_kvstore
+
+build cmake_object_order_depends_target_test_kvstore: phony || src/CMakeFiles/test_kvstore.dir
+
+build src/CMakeFiles/test_kvstore.dir/test_kvstore.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/test_kvstore.cpp || cmake_object_order_depends_target_test_kvstore
+  DEP_FILE = src\CMakeFiles\test_kvstore.dir\test_kvstore.cpp.obj.d
+  FLAGS = -std=gnu++17
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
+  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\test_kvstore.dir\
+  TARGET_PDB = src\test_kvstore.pdb
+
+build src/CMakeFiles/test_kvstore.dir/KeyValueStore.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/KeyValueStore.cpp || cmake_object_order_depends_target_test_kvstore
+  DEP_FILE = src\CMakeFiles\test_kvstore.dir\KeyValueStore.cpp.obj.d
+  FLAGS = -std=gnu++17
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
+  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\test_kvstore.dir\
+  TARGET_PDB = src\test_kvstore.pdb
+
+build src/CMakeFiles/test_kvstore.dir/CommandHandler.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/CommandHandler.cpp || cmake_object_order_depends_target_test_kvstore
+  DEP_FILE = src\CMakeFiles\test_kvstore.dir\CommandHandler.cpp.obj.d
+  FLAGS = -std=gnu++17
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
+  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\test_kvstore.dir\
+  TARGET_PDB = src\test_kvstore.pdb
+
+build src/CMakeFiles/test_kvstore.dir/Logger.cpp.obj: CXX_COMPILER__test_kvstore_unscanned_ C$:/Users/sdlewis/c++/kvstore/src/Logger.cpp || cmake_object_order_depends_target_test_kvstore
+  DEP_FILE = src\CMakeFiles\test_kvstore.dir\Logger.cpp.obj.d
+  FLAGS = -std=gnu++17
+  INCLUDES = -IC:/Users/sdlewis/c++/kvstore/include
+  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\test_kvstore.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\test_kvstore.dir\
+  TARGET_PDB = src\test_kvstore.pdb
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_kvstore
+
+
+#############################################
+# Link the executable src\test_kvstore.exe
+
+build src/test_kvstore.exe: CXX_EXECUTABLE_LINKER__test_kvstore_ src/CMakeFiles/test_kvstore.dir/test_kvstore.cpp.obj src/CMakeFiles/test_kvstore.dir/KeyValueStore.cpp.obj src/CMakeFiles/test_kvstore.dir/CommandHandler.cpp.obj src/CMakeFiles/test_kvstore.dir/Logger.cpp.obj
+  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = src\CMakeFiles\test_kvstore.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_COMPILE_PDB = src\CMakeFiles\test_kvstore.dir\
+  TARGET_FILE = src\test_kvstore.exe
+  TARGET_IMPLIB = src\libtest_kvstore.dll.a
+  TARGET_PDB = src\test_kvstore.pdb
 
 
 #############################################
@@ -313,17 +279,9 @@ build kvstore_server: phony src/kvstore_server.exe
 
 build kvstore_server.exe: phony src/kvstore_server.exe
 
-build test_client: phony src/test_client.exe
-
-build test_client.exe: phony src/test_client.exe
-
 build test_kvstore: phony src/test_kvstore.exe
 
 build test_kvstore.exe: phony src/test_kvstore.exe
-
-build test_threadpool: phony src/test_threadpool.exe
-
-build test_threadpool.exe: phony src/test_threadpool.exe
 
 # =============================================================================
 # Folder targets.
@@ -340,7 +298,7 @@ build all: phony src/all
 #############################################
 # Folder: C:/Users/sdlewis/c++/kvstore/src/src
 
-build src/all: phony src/kvstore_server.exe src/test_threadpool.exe src/test_kvstore.exe src/test_client.exe src/kvstore_client.exe
+build src/all: phony src/kvstore_server.exe src/kvstore_client.exe src/test_kvstore.exe
 
 # =============================================================================
 # Built-in targets
@@ -349,14 +307,14 @@ build src/all: phony src/kvstore_server.exe src/test_threadpool.exe src/test_kvs
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | C$:/Users/sdlewis/c++/kvstore/CMakeLists.txt C$:/msys64/ucrt64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/3.26.4/CMakeCXXCompiler.cmake CMakeFiles/3.26.4/CMakeRCCompiler.cmake CMakeFiles/3.26.4/CMakeSystem.cmake CMakeLists.txt
+build build.ninja: RERUN_CMAKE | C$:/Users/sdlewis/c++/kvstore/CMakeLists.txt C$:/msys64/ucrt64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/ucrt64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompileFeatures.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/3.26.4/CMakeCCompiler.cmake CMakeFiles/3.26.4/CMakeCXXCompiler.cmake CMakeFiles/3.26.4/CMakeRCCompiler.cmake CMakeFiles/3.26.4/CMakeSystem.cmake CMakeLists.txt
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Users/sdlewis/c++/kvstore/CMakeLists.txt C$:/msys64/ucrt64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/3.26.4/CMakeCXXCompiler.cmake CMakeFiles/3.26.4/CMakeRCCompiler.cmake CMakeFiles/3.26.4/CMakeSystem.cmake CMakeLists.txt: phony
+build C$:/Users/sdlewis/c++/kvstore/CMakeLists.txt C$:/msys64/ucrt64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/ucrt64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCXXInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompileFeatures.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/ucrt64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU-CXX.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/ucrt64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/3.26.4/CMakeCCompiler.cmake CMakeFiles/3.26.4/CMakeCXXCompiler.cmake CMakeFiles/3.26.4/CMakeRCCompiler.cmake CMakeFiles/3.26.4/CMakeSystem.cmake CMakeLists.txt: phony
 
 
 #############################################

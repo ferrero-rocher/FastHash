@@ -1,0 +1,15 @@
+2025-06-20 12:09:31 [INFO] Logger initialized - logging to file: server.log
+2025-06-20 12:09:31 [INFO] Server starting up...
+2025-06-20 12:09:31 [INFO] Port: 8080
+2025-06-20 12:09:31 [INFO] Signal handlers configured
+2025-06-20 12:09:31 [INFO] Server started successfully on port 8080
+2025-06-20 12:09:31 [INFO] Server loop started, listening for connections on port 8080
+2025-06-20 12:09:56 [INFO] Shutdown signal received, stopping server...
+2025-06-20 12:09:56 [INFO] Server stop requested
+2025-06-20 12:09:56 [INFO] Server socket closed
+2025-06-20 12:09:56 [INFO] Server loop stopped
+2025-06-20 12:09:56 [INFO] Server thread joined
+2025-06-20 12:09:56 [INFO] Server stopped successfully
+2025-06-20 12:09:56 [INFO] Server stopped successfully
+2025-06-20 12:09:56 [INFO] Server stop requested
+2025-06-20 12:09:56 [INFO] Server stopped successfully
