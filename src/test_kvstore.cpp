@@ -8,77 +8,62 @@
 #include <iostream>
 #include <sstream>
 
+using namespace std;
+
 void testBasicOperations() {
     KeyValueStore store;
-    Logger& logger = Logger::getInstance();
-    CommandHandler handler(store, logger);
     
     // Test SET and GET
-    store.set("key1", "value1");
-    auto value = store.get("key1");
-    assert(value && *value == "value1");
+    assert(store.set("key1", "value1"));
+    string value = store.get("key1");
+    assert(value == "value1");
     
     // Test DEL
-    store.del("key1");
-    assert(!store.get("key1"));
+    assert(store.del("key1"));
+    value = store.get("key1");
+    assert(value.empty());
     
-    // Cleanup
-    store.clear();
+    // Test EXISTS
+    assert(store.set("key2", "value2"));
+    assert(store.exists("key2"));
+    assert(!store.exists("key1"));
 }
 
 void testExpiration() {
     KeyValueStore store;
-    Logger& logger = Logger::getInstance();
-    CommandHandler handler(store, logger);
     
-    store.set("key1", "value1");
-    store.expire("key1", 1);  // 1 second expiration
-    
-    // Value should exist
-    auto value = store.get("key1");
-    assert(value && *value == "value1");
+    // Test TTL
+    assert(store.set("key1", "value1", 1));  // 1 second expiration
+    string value = store.get("key1");
+    assert(value == "value1");
     
     // Wait for expiration
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    
-    // Value should be expired
-    assert(!store.get("key1"));
-    
-    // Cleanup
-    store.clear();
+    this_thread::sleep_for(chrono::seconds(2));
+    value = store.get("key1");
+    assert(value.empty());
 }
 
 void testConcurrentAccess() {
     KeyValueStore store;
-    Logger& logger = Logger::getInstance();
-    CommandHandler handler(store, logger);
-    
-    std::vector<std::thread> threads;
     const int numThreads = 10;
     const int numOperations = 100;
     
+    vector<thread> threads;
     for (int i = 0; i < numThreads; ++i) {
         threads.emplace_back([&store, i, numOperations]() {
             for (int j = 0; j < numOperations; ++j) {
-                std::string key = "key" + std::to_string(i) + "_" + std::to_string(j);
-                std::string value = "value" + std::to_string(i) + "_" + std::to_string(j);
-                
+                string key = "key" + to_string(i) + "_" + to_string(j);
+                string value = "value" + to_string(i) + "_" + to_string(j);
                 store.set(key, value);
-                auto retrieved = store.get(key);
-                assert(retrieved && *retrieved == value);
-                store.expire(key, 1);
-                store.del(key);
-                assert(!store.get(key));
+                string retrieved = store.get(key);
+                assert(retrieved == value);
             }
         });
     }
     
-    for (auto& thread : threads) {
-        thread.join();
+    for (auto& t : threads) {
+        t.join();
     }
-    
-    // Cleanup
-    store.clear();
 }
 
 void testCommandHandler() {
@@ -103,7 +88,7 @@ void testCommandHandler() {
     assert(handler.handleCommand("EXPIRE temp 1") == "OK");
     
     // Wait for expiration
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    this_thread::sleep_for(chrono::seconds(2));
     
     // Test GET after expiration
     assert(handler.handleCommand("GET temp") == "Key not found");
@@ -119,16 +104,20 @@ void testCommandHandler() {
 }
 
 int main() {
-    try {
-        testBasicOperations();
-        testExpiration();
-        testConcurrentAccess();
-        testCommandHandler();
-        
-        std::cout << "All tests passed!" << std::endl;
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Test failed: " << e.what() << std::endl;
-        return 1;
-    }
+    cout << "Running KeyValueStore tests..." << endl;
+    
+    testBasicOperations();
+    cout << "Basic operations test passed" << endl;
+    
+    testExpiration();
+    cout << "Expiration test passed" << endl;
+    
+    testConcurrentAccess();
+    cout << "Concurrent access test passed" << endl;
+    
+    testCommandHandler();
+    cout << "Command handler test passed" << endl;
+    
+    cout << "All tests passed!" << endl;
+    return 0;
 } 

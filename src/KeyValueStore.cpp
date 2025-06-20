@@ -3,8 +3,19 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+
+KeyValueStore::KeyValueStore() : 
+    running_(true), 
+    memoryUsage_(0), 
+    totalOperations_(0), 
+    activeThreads_(0),
+    logger_(Logger::getInstance()) {
+    cleanerThread_ = thread(&KeyValueStore::cleanerLoop, this);
+}
 
 KeyValueStore::~KeyValueStore() {
     running_ = false;
@@ -13,233 +24,207 @@ KeyValueStore::~KeyValueStore() {
     }
 }
 
-bool KeyValueStore::set(const string& key, const string& value, int ttl_seconds) {
+bool KeyValueStore::set(const string& key, const string& value, int ttl) {
     lock_guard<mutex> lock(mutex_);
-    Value val;
-    val.data = value;
-    if (ttl_seconds > 0) {
-        val.expiry = chrono::system_clock::now() + chrono::seconds(ttl_seconds);
+    Value v;
+    v.value = value;
+    if (ttl > 0) {
+        v.expiry = chrono::system_clock::now() + chrono::seconds(ttl);
     }
-    store_[key] = val;
-    updateMemoryUsage(key, value, false);
+    store_[key] = v;
     totalOperations_++;
+    memoryUsage_ += key.size() + value.size();
+    // logger_.info("SET operation: key=" + key + ", value=" + value + (ttl > 0 ? ", ttl=" + to_string(ttl) : ""));
     return true;
 }
 
-optional<string> KeyValueStore::get(const string& key) {
+string KeyValueStore::get(const string& key) {
     lock_guard<mutex> lock(mutex_);
     auto it = store_.find(key);
-    if (it == store_.end() || isExpired(it->second)) {
-        return nullopt;
+    if (it != store_.end()) {
+        if (isExpired(it->second)) {
+            store_.erase(it);
+            // logger_.info("GET operation: key=" + key + " (expired)");
+            return "";
+        }
+        // logger_.info("GET operation: key=" + key + ", value=" + it->second.value);
+        return it->second.value;
     }
-    totalOperations_++;
-    return it->second.data;
+    // logger_.info("GET operation: key=" + key + " (not found)");
+    return "";
 }
 
 bool KeyValueStore::del(const string& key) {
     lock_guard<mutex> lock(mutex_);
     auto it = store_.find(key);
     if (it != store_.end()) {
-        updateMemoryUsage(it->first, it->second.data, true);
+        memoryUsage_ -= key.size() + it->second.value.size();
         store_.erase(it);
         totalOperations_++;
+        // logger_.info("DEL operation: key=" + key + " (deleted)");
         return true;
     }
+    // logger_.info("DEL operation: key=" + key + " (not found)");
     return false;
 }
 
 bool KeyValueStore::exists(const string& key) {
     lock_guard<mutex> lock(mutex_);
     auto it = store_.find(key);
-    if (it == store_.end() || isExpired(it->second)) {
-        return false;
+    if (it != store_.end()) {
+        if (isExpired(it->second)) {
+            store_.erase(it);
+            // logger_.info("EXISTS operation: key=" + key + " (expired)");
+            return false;
+        }
+        // logger_.info("EXISTS operation: key=" + key + " (exists)");
+        return true;
     }
-    totalOperations_++;
-    return true;
+    // logger_.info("EXISTS operation: key=" + key + " (not found)");
+    return false;
 }
 
 bool KeyValueStore::expire(const string& key, int ttl_seconds) {
     lock_guard<mutex> lock(mutex_);
     auto it = store_.find(key);
-    if (it == store_.end() || isExpired(it->second)) {
-        return false;
-    }
-    if (ttl_seconds > 0) {
+    if (it != store_.end()) {
         it->second.expiry = chrono::system_clock::now() + chrono::seconds(ttl_seconds);
-    } else {
-        it->second.expiry = nullopt;
+        // logger_.info("EXPIRE operation: key=" + key + ", ttl=" + to_string(ttl_seconds));
+        return true;
     }
-    totalOperations_++;
-    return true;
+    // logger_.info("EXPIRE operation: key=" + key + " (not found)");
+    return false;
 }
 
 optional<chrono::seconds> KeyValueStore::ttl(const string& key) {
     lock_guard<mutex> lock(mutex_);
     auto it = store_.find(key);
-    if (it == store_.end() || isExpired(it->second)) {
-        return nullopt;
+    if (it != store_.end()) {
+        if (isExpired(it->second)) {
+            // logger_.info("TTL operation: key=" + key + " (expired)");
+            return nullopt;
+        }
+        auto now = chrono::system_clock::now();
+        auto ttl = chrono::duration_cast<chrono::seconds>(it->second.expiry - now);
+        // logger_.info("TTL operation: key=" + key + ", ttl=" + to_string(ttl.count()));
+        return ttl;
     }
-    if (!it->second.expiry) {
-        return chrono::seconds(-1);  // No expiry
-    }
-    auto remaining = chrono::duration_cast<chrono::seconds>(
-        *it->second.expiry - chrono::system_clock::now());
-    totalOperations_++;
-    return remaining.count() > 0 ? remaining : chrono::seconds(0);
+    // logger_.info("TTL operation: key=" + key + " (not found)");
+    return nullopt;
 }
 
-vector<string> KeyValueStore::getKeys() const {
+vector<string> KeyValueStore::keys() {
     lock_guard<mutex> lock(mutex_);
-    vector<string> keys;
+    vector<string> result;
     for (const auto& pair : store_) {
         if (!isExpired(pair.second)) {
-            keys.push_back(pair.first);
+            result.push_back(pair.first);
         }
     }
-    return keys;
+    // logger_.info("KEYS operation: returned " + to_string(result.size()) + " keys");
+    return result;
 }
 
-bool KeyValueStore::clear() {
+void KeyValueStore::clear() {
     lock_guard<mutex> lock(mutex_);
     store_.clear();
     memoryUsage_ = 0;
     totalOperations_++;
-    return true;
+    // logger_.info("CLEAR operation: all keys removed");
 }
 
-bool KeyValueStore::save(const string& filename) const {
-    return saveToFile(filename);
+bool KeyValueStore::save(const string& filename) {
+    lock_guard<mutex> lock(mutex_);
+    ofstream file(filename);
+    if (!file) {
+        // logger_.error("SAVE operation: failed to open file " + filename);
+        return false;
+    }
+    
+    for (const auto& pair : store_) {
+        if (!isExpired(pair.second)) {
+            file << pair.first << " " << pair.second.value << "\n";
+        }
+    }
+    
+    // logger_.info("SAVE operation: saved to " + filename);
+    return true;
 }
 
 bool KeyValueStore::load(const string& filename) {
-    return loadFromFile(filename);
-}
-
-KeyValueStoreStats KeyValueStore::getStats() const {
     lock_guard<mutex> lock(mutex_);
-    KeyValueStoreStats stats;
-    stats.total_keys = store_.size();
-    stats.memory_usage = memoryUsage_;
-    stats.totalOperations = totalOperations_;
-    stats.activeThreads = activeThreads_;
-    stats.uptime = chrono::duration_cast<chrono::seconds>(
-        chrono::system_clock::now() - startTime_);
-    
-    for (const auto& pair : store_) {
-        if (isExpired(pair.second)) {
-            stats.expired_keys++;
-        }
+    ifstream file(filename);
+    if (!file) {
+        // logger_.error("LOAD operation: failed to open file " + filename);
+        return false;
     }
-    return stats;
-}
-
-bool KeyValueStore::flush() {
-    lock_guard<mutex> lock(mutex_);
+    
     store_.clear();
     memoryUsage_ = 0;
-    totalOperations_++;
+    string key, value;
+    while (file >> key >> value) {
+        Value v;
+        v.value = value;
+        store_[key] = v;
+        memoryUsage_ += key.size() + value.size();
+    }
+    
+    // logger_.info("LOAD operation: loaded from " + filename);
     return true;
 }
 
-void KeyValueStore::updateMemoryUsage(const string& key, const string& value, bool isDelete) {
-    if (isDelete) {
-        memoryUsage_ -= (key.size() + value.size());
-    } else {
-        memoryUsage_ += (key.size() + value.size());
+bool KeyValueStore::flush(const string& filename) {
+    lock_guard<mutex> lock(mutex_);
+    ofstream file(filename);
+    if (!file) {
+        // logger_.error("FLUSH operation: failed to open file " + filename);
+        return false;
     }
+    
+    for (const auto& pair : store_) {
+        if (!isExpired(pair.second)) {
+            file << pair.first << " " << pair.second.value << "\n";
+        }
+    }
+    
+    store_.clear();
+    memoryUsage_ = 0;
+    // logger_.info("FLUSH operation: flushed to " + filename);
+    return true;
+}
+
+StoreStats KeyValueStore::getStats() {
+    lock_guard<mutex> lock(mutex_);
+    StoreStats stats;
+    stats.totalOperations = totalOperations_;
+    stats.memoryUsage = memoryUsage_;
+    stats.activeThreads = activeThreads_;
+    stats.totalKeys = store_.size();
+    // logger_.info("STATS operation: retrieved statistics");
+    return stats;
 }
 
 void KeyValueStore::cleanerLoop() {
     while (running_) {
-        this_thread::sleep_for(chrono::seconds(1));
-        lock_guard<mutex> lock(mutex_);
-        for (auto it = store_.begin(); it != store_.end();) {
-            if (isExpired(it->second)) {
-                updateMemoryUsage(it->first, it->second.data, true);
-                it = store_.erase(it);
-            } else {
-                ++it;
+        {
+            lock_guard<mutex> lock(mutex_);
+            for (auto it = store_.begin(); it != store_.end();) {
+                if (isExpired(it->second)) {
+                    memoryUsage_ -= it->first.size() + it->second.value.size();
+                    it = store_.erase(it);
+                    // logger_.info("Cleaner: removed expired key");
+                } else {
+                    ++it;
+                }
             }
         }
+        this_thread::sleep_for(chrono::seconds(1));
     }
 }
 
 bool KeyValueStore::isExpired(const Value& value) const {
-    if (!value.expiry) {
+    if (value.expiry == chrono::system_clock::time_point()) {
         return false;
     }
-    return chrono::system_clock::now() >= *value.expiry;
-}
-
-bool KeyValueStore::saveToFile(const string& filename) const {
-    lock_guard<mutex> lock(mutex_);
-    ofstream file(filename, ios::binary);
-    if (!file) {
-        return false;
-    }
-
-    size_t size = store_.size();
-    file.write(reinterpret_cast<const char*>(&size), sizeof(size));
-
-    for (const auto& pair : store_) {
-        if (!isExpired(pair.second)) {
-            size_t keySize = pair.first.size();
-            size_t valueSize = pair.second.data.size();
-            bool hasExpiry = pair.second.expiry.has_value();
-
-            file.write(reinterpret_cast<const char*>(&keySize), sizeof(keySize));
-            file.write(pair.first.c_str(), keySize);
-            file.write(reinterpret_cast<const char*>(&valueSize), sizeof(valueSize));
-            file.write(pair.second.data.c_str(), valueSize);
-            file.write(reinterpret_cast<const char*>(&hasExpiry), sizeof(hasExpiry));
-
-            if (hasExpiry) {
-                auto expiryTime = pair.second.expiry->time_since_epoch().count();
-                file.write(reinterpret_cast<const char*>(&expiryTime), sizeof(expiryTime));
-            }
-        }
-    }
-
-    return true;
-}
-
-bool KeyValueStore::loadFromFile(const string& filename) {
-    lock_guard<mutex> lock(mutex_);
-    ifstream file(filename, ios::binary);
-    if (!file) {
-        return false;
-    }
-
-    store_.clear();
-    memoryUsage_ = 0;
-
-    size_t size;
-    file.read(reinterpret_cast<char*>(&size), sizeof(size));
-
-    for (size_t i = 0; i < size; ++i) {
-        size_t keySize, valueSize;
-        file.read(reinterpret_cast<char*>(&keySize), sizeof(keySize));
-        string key(keySize, '\0');
-        file.read(&key[0], keySize);
-
-        file.read(reinterpret_cast<char*>(&valueSize), sizeof(valueSize));
-        string value(valueSize, '\0');
-        file.read(&value[0], valueSize);
-
-        Value val;
-        val.data = value;
-
-        bool hasExpiry;
-        file.read(reinterpret_cast<char*>(&hasExpiry), sizeof(hasExpiry));
-        if (hasExpiry) {
-            chrono::system_clock::rep expiryTime;
-            file.read(reinterpret_cast<char*>(&expiryTime), sizeof(expiryTime));
-            val.expiry = chrono::system_clock::time_point(chrono::system_clock::duration(expiryTime));
-        }
-
-        store_[key] = val;
-        updateMemoryUsage(key, value, false);
-    }
-
-    return true;
+    return chrono::system_clock::now() >= value.expiry;
 }

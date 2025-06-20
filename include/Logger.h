@@ -8,32 +8,20 @@
 using namespace std;
 
 class Logger {
-public:
-    enum class Level {
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR
-    };
-
-    static Logger& getInstance(const string& filename = "kvstore.log");
-    void debug(const string& message);
-    void info(const string& message);
-    void warning(const string& message);
-    void error(const string& message);
-
 private:
-    Logger(const string& filename);
-    ~Logger();
+    static Logger* instance;
+    static std::mutex mutex_;
+    ofstream logFile_;
+
+    Logger() = default;
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
 
-    static Logger* instance_;
-    static mutex mutex_;
-    ofstream logFile_;
-    Level minLevel_ = Level::INFO;
-
-    void log(Level level, const string& message);
-    string getTimestamp();
-    string levelToString(Level level);
+public:
+    static Logger& getInstance();
+    void info(const string& message);
+    void error(const string& message);
+    void warning(const string& message);
+    void setLogFile(const string& filename);
+    ~Logger();
 }; 

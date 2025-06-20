@@ -2,67 +2,58 @@
 
 #include <string>
 #include <unordered_map>
-#include <mutex>
 #include <chrono>
-#include <optional>
-#include <vector>
+#include <mutex>
 #include <thread>
-#include <atomic>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <optional>
 #include "Logger.h"
 
 using namespace std;
 
-struct KeyValueStoreStats {
-    size_t total_keys = 0;
-    size_t expired_keys = 0;
-    size_t memory_usage = 0;
-    size_t totalOperations = 0;
-    size_t activeThreads = 0;
-    chrono::seconds uptime{0};
+struct StoreStats {
+    size_t totalOperations;
+    size_t memoryUsage;
+    size_t activeThreads;
+    size_t totalKeys;
 };
 
 class KeyValueStore {
 public:
-    KeyValueStore() = default;
-    KeyValueStore(const KeyValueStore&) = delete;
-    KeyValueStore& operator=(const KeyValueStore&) = delete;
-    KeyValueStore(KeyValueStore&&) = default;
+    KeyValueStore();
     ~KeyValueStore();
 
-    bool set(const string& key, const string& value, int ttl_seconds = 0);
-    optional<string> get(const string& key);
+    // Core operations
+    bool set(const string& key, const string& value, int ttl = 0);
+    string get(const string& key);
     bool del(const string& key);
     bool exists(const string& key);
+    vector<string> keys();
+    void clear();
+    bool save(const string& filename);
+    bool load(const string& filename);
+    bool flush(const string& filename);
+    StoreStats getStats();
     bool expire(const string& key, int ttl_seconds);
     optional<chrono::seconds> ttl(const string& key);
-    vector<string> getKeys() const;
-    bool clear();
-    bool save(const string& filename) const;
-    bool load(const string& filename);
-    KeyValueStoreStats getStats() const;
-    bool flush();
-
-    void incrementActiveThreads() { activeThreads_++; }
-    void decrementActiveThreads() { activeThreads_--; }
 
 private:
     struct Value {
-        string data;
-        optional<chrono::system_clock::time_point> expiry;
+        string value;
+        chrono::system_clock::time_point expiry;
     };
 
     unordered_map<string, Value> store_;
-    mutable mutex mutex_;
-    atomic<size_t> memoryUsage_{0};
-    atomic<size_t> totalOperations_{0};
-    atomic<size_t> activeThreads_{0};
-    chrono::system_clock::time_point startTime_{chrono::system_clock::now()};
+    mutex mutex_;
     thread cleanerThread_;
-    atomic<bool> running_{true};
+    bool running_;
+    size_t memoryUsage_;
+    size_t totalOperations_;
+    size_t activeThreads_;
+    Logger& logger_;
 
-    void updateMemoryUsage(const string& key, const string& value, bool isDelete);
     void cleanerLoop();
     bool isExpired(const Value& value) const;
-    bool saveToFile(const string& filename) const;
-    bool loadFromFile(const string& filename);
 }; 

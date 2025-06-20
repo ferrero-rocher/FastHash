@@ -16,7 +16,7 @@ using namespace std;
 // Returns: "OK", value, "NOT_FOUND", "ERROR <msg>", or stats in JSON format
 class CommandHandler {
 public:
-    CommandHandler(KeyValueStore& store, Logger& logger);
+    CommandHandler(KeyValueStore& store, Logger& logger) : store_(store), logger_(logger) {}
     
     string handleCommand(const string& command);
 
@@ -34,6 +34,7 @@ public:
     string handleDump(std::istringstream& iss);
     string handleHelp(std::istringstream& iss);
     string handleFlush(std::istringstream& iss);
+    string handleQuit(std::istringstream& iss);
 
 private:
     KeyValueStore& store_;

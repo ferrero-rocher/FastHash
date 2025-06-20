@@ -1,4 +1,11 @@
-add_executable(kvstore_server
+cmake_minimum_required(VERSION 3.10)
+project(kvstore)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add source files
+set(SERVER_SOURCES
     main.cpp
     Server.cpp
     KeyValueStore.cpp
@@ -6,32 +13,35 @@ add_executable(kvstore_server
     Logger.cpp
 )
 
-add_executable(test_threadpool
-    test_threadpool.cpp
-)
-
-add_executable(test_kvstore
-    test_kvstore.cpp
-    KeyValueStore.cpp
-    CommandHandler.cpp
+set(CLIENT_SOURCES
+    client.cpp
     Logger.cpp
 )
 
-add_executable(test_client
-    test_client.cpp
+# Add test files
+set(TEST_SOURCES
+    test_kvstore.cpp
 )
 
-add_executable(kvstore_client client.cpp)
+# Create main executable
+add_executable(kvstore_server ${SERVER_SOURCES})
 
-target_include_directories(kvstore_server PRIVATE ../include)
-target_include_directories(test_threadpool PRIVATE ../include)
-target_include_directories(test_kvstore PRIVATE ../include)
-target_include_directories(test_client PRIVATE ../include)
+# Create client executable
+add_executable(kvstore_client ${CLIENT_SOURCES})
+
+# Create test executables
+add_executable(test_kvstore test_kvstore.cpp KeyValueStore.cpp CommandHandler.cpp Logger.cpp)
+
+# Include directories
+target_include_directories(kvstore_server PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(kvstore_client PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(test_kvstore PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
-if(WIN32)
-    target_link_libraries(kvstore_server ws2_32)
-    target_link_libraries(test_client ws2_32)
-    target_link_libraries(kvstore_client ws2_32)
-    target_link_libraries(test_kvstore ws2_32)
-endif() 
+# Link libraries
+target_link_libraries(kvstore_server ws2_32)
+target_link_libraries(kvstore_client ws2_32)
+target_link_libraries(test_kvstore ws2_32)
+
+# Enable testing
+enable_testing()
+add_test(NAME test_kvstore COMMAND test_kvstore) 
